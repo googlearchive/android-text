@@ -38,7 +38,7 @@ test - Run all unit tests.
 
 Screenshots
 -----------
-<img src="screenshots/main_activity.png" width="30%" />
+<img src="../screenshots/main_activity.png" width="30%" />
 
 Support
 -------
