@@ -1,11 +1,9 @@
 Text Styling
 ============
-These samples shows how to style text on Android using spans, in [Java](https://github.com/googlesamples/android-text/tree/master/TextStyling-Java) and in [Kotlin](https://github.com/googlesamples/android-text/tree/master/TextStyling-Kotlin).
-
+This sample shows how to style text on Android using spans, in Kotlin, using [Android KTX](https://github.com/android/android-ktx).
 
 Introduction
 ------------
-The difference between [TextStyling-Java](https://github.com/googlesamples/android-text/tree/master/TextStyling-Java) and [TextStyling-Kotlin](https://github.com/googlesamples/android-text/tree/master/TextStyling-Kotlin) is only in the language. They have the same set of features, same class names and similar ways of testing the functionality.
 ## Features
 Parse some hardcoded text and do the following:
 * Paragraphs starting with “> ” are transformed into quotes.

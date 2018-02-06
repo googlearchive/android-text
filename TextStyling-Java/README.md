@@ -1,11 +1,9 @@
 Text Styling
 ============
-These samples shows how to style text on Android using spans, in [Java](https://github.com/googlesamples/android-text/tree/master/TextStyling-Java) and in [Kotlin](https://github.com/googlesamples/android-text/tree/master/TextStyling-Kotlin).
-
+This sample shows how to style text on Android using spans, in Java.
 
 Introduction
 ------------
-The difference between [TextStyling-Java](https://github.com/googlesamples/android-text/tree/master/TextStyling-Java) and [TextStyling-Kotlin](https://github.com/googlesamples/android-text/tree/master/TextStyling-Kotlin) is only in the language. They have the same set of features, same class names and similar ways of testing the functionality.
 ## Features
 Parse some hardcoded text and do the following:
 * Paragraphs starting with “> ” are transformed into quotes.
@@ -15,11 +13,11 @@ To update the text, modify the value of `R.string.display_text`.
 This project is not meant to fully cover the markdown capabilities and has several limitations; for example, quotes do not support nesting other elements.
 
 ## Implementation
-The text is parsed in the `Parser.parse` method and the spans are created in the `MarkdownBuilder.markdownToSpans` method.
-To see how to apply a span, check out `MarkdownBuilder.buildCodeBlockSpan`. To see how to apply multiple spans on the same string, see `MarkdownBuilder.buildQuoteSpan”. For examples of creating custom spans, see `BulletPointSpan`, `CodeBlockSpan` or `FontSpan`.
+The text is parsed in the [`Parser.parse`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/parser/Parser.java#L62) method and the spans are created in the [`MarkdownBuilder.markdownToSpans`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/MarkdownBuilder.java#L62) method.
+To see how to apply a span, check out [`MarkdownBuilder.buildCodeBlockSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/MarkdownBuilder.java#L120). To see how to apply multiple spans on the same string, see [`MarkdownBuilder.buildQuoteSpan”](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/MarkdownBuilder.java#L108). For examples of creating custom spans, see [`BulletPointSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/spans/BulletPointSpan.java), [`CodeBlockSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/spans/CodeBlockSpan.java) or [`FontSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/main/java/com/android/example/text/styling/renderer/spans/FontSpan.java).
 
 ## Testing
-Text parsing is tested with JUnit tests in `ParserTest`. Span building is tested via Android JUnit tests, in `MarkdownBuilderTest`.
+Text parsing is tested with JUnit tests in [`ParserTest`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/test/java/com/android/example/text/styling/parser/ParserTest.java). Span building is tested via Android JUnit tests, in [`MarkdownBuilderTest`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Java/app/src/androidTest/java/com/android/example/text/styling/renderer/MarkdownBuilderTest.java).
 
 
 Getting Started
