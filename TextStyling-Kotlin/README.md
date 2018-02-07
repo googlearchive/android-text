@@ -13,8 +13,8 @@ To update the text, modify the value of `R.string.display_text`.
 This project is not meant to fully cover the markdown capabilities and has several limitations; for example, quotes do not support nesting other elements.
 
 ## Implementation
-The text is parsed in the `Parser.parse` method and the spans are created in the `MarkdownBuilder.markdownToSpans` method.
-To see how to apply a span, check out `MarkdownBuilder.buildCodeBlockSpan`. To see how to apply multiple spans on the same string, see `MarkdownBuilder.buildQuoteSpan”. For examples of creating custom spans, see `BulletPointSpan`, `CodeBlockSpan` or `FontSpan`.
+The text is parsed in the [`Parser.parse`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/parser/Parser.kt#L42) method and the spans are created in the [`MarkdownBuilder.markdownToSpans`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/renderer/MarkdownBuilder.kt#L43) method.
+To see how to apply one or multiple spans on a string, check out [`MarkdownBuilder.buildElement`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/renderer/MarkdownBuilder.kt#L53). For examples of creating custom spans, see [`BulletPointSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/renderer/spans/BulletPointSpan.kt), [`CodeBlockSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/renderer/spans/CodeBlockSpan.kt) or [`FontSpan`](https://github.com/googlesamples/android-text/blob/master/TextStyling-Kotlin/app/src/main/java/com/android/example/text/styling/renderer/spans/FontSpan.kt).
 
 ## Testing
 Text parsing is tested with JUnit tests in `ParserTest`. Span building is tested via Android JUnit tests, in `MarkdownBuilderTest`.
@@ -38,7 +38,7 @@ test - Run all unit tests.
 
 Screenshots
 -----------
-<img src="screenshots/main_activity.png" width="30%" />
+<img src="../screenshots/main_activity.png" width="30%" />
 
 Support
 -------
