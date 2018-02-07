@@ -16,7 +16,7 @@ This project is not meant to fully cover the markdown capabilities and has sever
 
 ## Implementation
 The text is parsed in the `Parser.parse` method and the spans are created in the `MarkdownBuilder.markdownToSpans` method.
-To see how to apply a span, check out `MarkdownBuilder.buildCodeBlockSpan`. To see how to apply multiple spans on the same string, see `MarkdownBuilder.buildQuoteSpan”. For examples of creating custom spans, see `BulletPointSpan`, `CodeBlockSpan` or `FontSpan`.
+To see how to apply a span, check out `MarkdownBuilder.buildCodeBlockSpan`. To see how to apply multiple spans on the same string, see `MarkdownBuilder.buildQuoteSpan`. For examples of creating custom spans, see `BulletPointSpan`, `CodeBlockSpan` or `FontSpan`.
 
 ## Testing
 Text parsing is tested with JUnit tests in `ParserTest`. Span building is tested via Android JUnit tests, in `MarkdownBuilderTest`.
