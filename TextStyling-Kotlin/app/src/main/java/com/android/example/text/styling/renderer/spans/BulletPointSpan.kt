@@ -31,9 +31,9 @@ import android.text.style.LeadingMarginSpan
  * and with a left margin.
  */
 class BulletPointSpan(
-        private @Px val gapWidth: Int = DEFAULT_GAP_WIDTH,
-        private @ColorInt val color: Int = Color.BLACK,
-        private val useColor: Boolean = color != Color.BLACK
+    @Px private val gapWidth: Int = DEFAULT_GAP_WIDTH,
+    @ColorInt private val color: Int = Color.BLACK,
+    private val useColor: Boolean = color != Color.BLACK
 ) : LeadingMarginSpan {
 
     private var bulletPath: Path? = null
