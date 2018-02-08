@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         // Text enclosed in “`” will be transformed into inline code block
         // Lines starting with “+ ” or “* ” will be transformed into bullet points. Bullet
         // points can contain nested markdown elements, like code.
-        val bulletPointColor = ContextCompat.getColor(this, R.color.colorAccent)
-        val codeBackgroundColor = ContextCompat.getColor(this, R.color.code_background)
-        val codeBlockTypeface = ResourcesCompat.getFont(this, R.font.inconsolata)
+        val bulletPointColor = getColorCompat(R.color.colorAccent)
+        val codeBackgroundColor = getColorCompat(R.color.code_background)
+        val codeBlockTypeface = getFontCompat(R.font.inconsolata)
 
         MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface, Parser)
                 .markdownToSpans(getString(R.string.display_text))
