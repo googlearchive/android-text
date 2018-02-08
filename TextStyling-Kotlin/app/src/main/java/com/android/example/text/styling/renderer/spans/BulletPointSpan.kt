@@ -37,7 +37,7 @@ class BulletPointSpan(
     private val useColor: Boolean = color != Color.BLACK
 ) : LeadingMarginSpan {
 
-    private var bulletPath: Path? = null
+    private val bulletPath: Path by lazy(LazyThreadSafetyMode.NONE) { Path() }
 
     override fun getLeadingMargin(first: Boolean) = (2 * BULLET_RADIUS + 2 * gapWidth).toInt()
 
@@ -52,22 +52,18 @@ class BulletPointSpan(
         if ((text as Spanned).getSpanStart(this) == start) {
             p.withCustomColor {
                 if (c.isHardwareAccelerated) {
-                    if (bulletPath == null) {
-                        bulletPath = Path()
-                        // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
-                        bulletPath?.addCircle(
-                            0.0f, 0.0f, 1.2f * BULLET_RADIUS,
-                            Direction.CW
-                        )
-                    }
+                    // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
+                    bulletPath.addCircle(0.0f, 0.0f, 1.2f * BULLET_RADIUS, Direction.CW)
 
                     c.withTranslation(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f) {
                         drawPath(bulletPath, p)
                     }
                 } else {
                     c.drawCircle(
-                        gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f,
-                        BULLET_RADIUS, p
+                        gapWidth + x + dir * BULLET_RADIUS,
+                        (top + bottom) / 2.0f,
+                        BULLET_RADIUS,
+                        p
                     )
                 }
             }
