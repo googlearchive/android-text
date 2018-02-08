@@ -16,6 +16,7 @@
 package com.android.example.text.styling.parser
 
 import java.util.Collections.emptyList
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -48,21 +49,20 @@ object Parser {
         val matcher = patternQuote.matcher(string)
         var lastStartIndex = 0
 
-        while (matcher.find(lastStartIndex)) {
-            val startIndex = matcher.start()
-            val endIndex = matcher.end()
-            // we found a quote
-            if (lastStartIndex < startIndex) {
-                // check what was before the quote
-                val text = string.subSequence(lastStartIndex, startIndex)
-                parents.addAll(findElements(text, pattern))
+        generateSequence { matcher.findBoundaries(lastStartIndex) }
+            .forEach { (startIndex, endIndex) ->
+                // we found a quote
+                if (lastStartIndex < startIndex) {
+                    // check what was before the quote
+                    val text = string.subSequence(lastStartIndex, startIndex)
+                    parents.addAll(findElements(text, pattern))
+                }
+                // a quote can only be a paragraph long, so look for end of line
+                val endOfQuote = getEndOfParagraph(string, endIndex)
+                lastStartIndex = endOfQuote
+                val quotedText = string.subSequence(endIndex, endOfQuote)
+                parents.add(Element(Element.Type.QUOTE, quotedText, emptyList<Element>()))
             }
-            // a quote can only be a paragraph long, so look for end of line
-            val endOfQuote = getEndOfParagraph(string, endIndex)
-            lastStartIndex = endOfQuote
-            val quotedText = string.subSequence(endIndex, endOfQuote)
-            parents.add(Element(Element.Type.QUOTE, quotedText, emptyList<Element>()))
-        }
 
         // check if there are any other element after the quote
         if (lastStartIndex < string.length) {
@@ -154,3 +154,6 @@ object Parser {
 
     private val LINE_SEPARATOR = System.getProperty("line.separator")
 }
+
+private fun Matcher.findBoundaries(start: Int): Pair<Int, Int>? =
+    if (find(start)) start() to end() else null
