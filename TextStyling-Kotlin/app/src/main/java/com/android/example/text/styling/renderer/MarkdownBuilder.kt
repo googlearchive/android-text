@@ -44,8 +44,8 @@ class MarkdownBuilder(
         val markdown = parser.parse(string)
 
         return buildSpannedString {
-            for (i in 0 until markdown.elements.size) {
-                buildElement(markdown.elements[i], this)
+            for (element in markdown.elements) {
+                buildElement(element, this)
             }
         }
     }
