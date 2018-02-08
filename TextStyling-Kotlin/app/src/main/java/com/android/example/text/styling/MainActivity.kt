@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
         MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface, Parser)
             .markdownToSpans(getString(R.string.display_text))
-            .run { styledText.text = this }
-
+            .let { spannedText -> styledText.text = spannedText }
     }
 }
