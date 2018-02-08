@@ -90,48 +90,51 @@ object Parser {
         val matcher = pattern.matcher(string)
         var lastStartIndex = 0
 
-        while (matcher.find(lastStartIndex)) {
-            val startIndex = matcher.start()
-            val endIndex = matcher.end()
-            // we found a mark
-            val mark = string.subSequence(startIndex, endIndex)
-            if (lastStartIndex < startIndex) {
-                // check what was before the mark
-                parents.addAll(findElements(string.subSequence(lastStartIndex, startIndex),
-                        pattern))
-            }
-            val text: CharSequence
-            // check what kind of mark this was
-            when (mark) {
-                BULLET_PLUS, BULLET_STAR -> {
-                    // every bullet point is max until a new line or end of text
-                    var endOfBulletPoint = getEndOfParagraph(string, endIndex)
-                    text = string.subSequence(endIndex, endOfBulletPoint)
-                    lastStartIndex = endOfBulletPoint
-                    // also see what else we have in the text
-                    val subMarks = findElements(text, pattern)
-                    val bulletPoint = Element(Element.Type.BULLET_POINT, text, subMarks)
-                    parents.add(bulletPoint)
+        generateSequence { matcher.findBoundaries(lastStartIndex) }
+            .forEach { (startIndex, endIndex) ->
+                // we found a mark
+                val mark = string.subSequence(startIndex, endIndex)
+                if (lastStartIndex < startIndex) {
+                    // check what was before the mark
+                    parents.addAll(
+                        findElements(
+                            string.subSequence(lastStartIndex, startIndex),
+                            pattern
+                        )
+                    )
                 }
-                CODE_BLOCK -> {
-                    // a code block is set between two "`" so look for the other one
-                    // if another "`" is not found, then this is not a code block
-                    var markEnd = string.indexOf(CODE_BLOCK, endIndex)
-                    if (markEnd == -1) {
-                        // we don't have an end of code block so this is just text
-                        markEnd = string.length
-                        text = string.subSequence(startIndex, markEnd)
-                        lastStartIndex = markEnd
-                    } else {
-                        // we found the end of the code block
-                        text = string.subSequence(endIndex, markEnd)
-                        // adding 1 so we can ignore the ending "`" for the code block
-                        lastStartIndex = markEnd + 1
+                val text: CharSequence
+                // check what kind of mark this was
+                when (mark) {
+                    BULLET_PLUS, BULLET_STAR -> {
+                        // every bullet point is max until a new line or end of text
+                        val endOfBulletPoint = getEndOfParagraph(string, endIndex)
+                        text = string.subSequence(endIndex, endOfBulletPoint)
+                        lastStartIndex = endOfBulletPoint
+                        // also see what else we have in the text
+                        val subMarks = findElements(text, pattern)
+                        val bulletPoint = Element(Element.Type.BULLET_POINT, text, subMarks)
+                        parents.add(bulletPoint)
                     }
-                    parents.add(Element(Element.Type.TEXT, text, emptyList<Element>()))
+                    CODE_BLOCK -> {
+                        // a code block is set between two "`" so look for the other one
+                        // if another "`" is not found, then this is not a code block
+                        var markEnd = string.indexOf(CODE_BLOCK, endIndex)
+                        if (markEnd == -1) {
+                            // we don't have an end of code block so this is just text
+                            markEnd = string.length
+                            text = string.subSequence(startIndex, markEnd)
+                            lastStartIndex = markEnd
+                        } else {
+                            // we found the end of the code block
+                            text = string.subSequence(endIndex, markEnd)
+                            // adding 1 so we can ignore the ending "`" for the code block
+                            lastStartIndex = markEnd + 1
+                        }
+                        parents.add(Element(Element.Type.TEXT, text, emptyList<Element>()))
+                    }
                 }
             }
-        }
 
         // check if there's any more text left
         if (lastStartIndex < string.length) {
