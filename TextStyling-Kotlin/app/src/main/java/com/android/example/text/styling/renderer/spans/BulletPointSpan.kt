@@ -46,45 +46,55 @@ class BulletPointSpan(
      * margins before the bullet.
      */
     override fun drawLeadingMargin(
-            c: Canvas, p: Paint, x: Int, dir: Int, top: Int, baseline: Int, bottom: Int,
-            text: CharSequence, start: Int, end: Int, first: Boolean, l: Layout
+        c: Canvas, p: Paint, x: Int, dir: Int, top: Int, baseline: Int, bottom: Int,
+        text: CharSequence, start: Int, end: Int, first: Boolean, l: Layout
     ) {
         if ((text as Spanned).getSpanStart(this) == start) {
-            val style = p.style
-            val oldColor = if (useColor) p.color else 0
+            p.withCustomColor {
+                if (c.isHardwareAccelerated) {
+                    if (bulletPath == null) {
+                        bulletPath = Path()
+                        // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
+                        bulletPath?.addCircle(
+                            0.0f, 0.0f, 1.2f * BULLET_RADIUS,
+                            Direction.CW
+                        )
+                    }
 
-            if (useColor) {
-                p.color = color
-            }
-
-            p.style = Paint.Style.FILL
-
-            if (c.isHardwareAccelerated) {
-                if (bulletPath == null) {
-                    bulletPath = Path()
-                    // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
-                    bulletPath?.addCircle(0.0f, 0.0f, 1.2f * BULLET_RADIUS,
-                            Direction.CW)
+                    c.withTranslation(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f) {
+                        drawPath(bulletPath, p)
+                    }
+                } else {
+                    c.drawCircle(
+                        gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f,
+                        BULLET_RADIUS, p
+                    )
                 }
-
-                c.withTranslation(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f) {
-                    drawPath(bulletPath, p)
-                }
-            } else {
-                c.drawCircle(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f,
-                        BULLET_RADIUS, p)
             }
-
-            if (useColor) {
-                p.color = oldColor
-            }
-
-            p.style = style
         }
     }
 
     companion object {
         private const val DEFAULT_GAP_WIDTH = 2
         private const val BULLET_RADIUS = 15.0f
+    }
+
+    private inline fun Paint.withCustomColor(body: () -> Unit){
+        val oldStyle = style
+        val oldColor = if (useColor) color else 0
+
+        if (useColor) {
+            color = this@BulletPointSpan.color
+        }
+
+        style = Paint.Style.FILL
+
+        body()
+
+        if (useColor) {
+            color = oldColor
+        }
+
+        style = oldStyle
     }
 }
