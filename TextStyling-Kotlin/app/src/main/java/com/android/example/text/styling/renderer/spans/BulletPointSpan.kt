@@ -50,10 +50,9 @@ class BulletPointSpan(
     ) {
         if ((text as Spanned).getSpanStart(this) == start) {
             val style = p.style
-            var oldcolor = 0
+            val oldColor = if (useColor) p.color else 0
 
             if (useColor) {
-                oldcolor = p.color
                 p.color = color
             }
 
@@ -79,7 +78,7 @@ class BulletPointSpan(
             }
 
             if (useColor) {
-                p.color = oldcolor
+                p.color = oldColor
             }
 
             p.style = style
