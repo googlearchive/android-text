@@ -74,16 +74,15 @@ object Parser {
     }
 
     private fun getEndOfParagraph(string: CharSequence, endIndex: Int): Int {
-        var endOfParagraph = string.indexOf(LINE_SEPARATOR, endIndex)
-        if (endOfParagraph == -1) {
-            // we don't have an end of line, so the quote is the last element in the text
-            // so we can consider that the end of the quote is the end of the text
-            endOfParagraph = string.length
-        } else {
-            // add the new line as part of the element
-            endOfParagraph++
+        val endOfParagraph = string.indexOf(LINE_SEPARATOR, endIndex)
+
+        return when (endOfParagraph) {
+        // we don't have an end of line, so the quote is the last element in the text
+        // so we can consider that the end of the quote is the end of the text
+            -1 -> string.length
+        // add the new line as part of the element
+            else -> endOfParagraph + 1
         }
-        return endOfParagraph
     }
 
     private fun findElements(string: CharSequence, pattern: Pattern): List<Element> {
