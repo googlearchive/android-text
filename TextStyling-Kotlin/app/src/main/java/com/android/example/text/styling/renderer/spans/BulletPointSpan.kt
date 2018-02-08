@@ -25,6 +25,7 @@ import android.support.annotation.Px
 import android.text.Layout
 import android.text.Spanned
 import android.text.style.LeadingMarginSpan
+import androidx.graphics.withTranslation
 
 /**
  * Creating a bullet span with bigger bullets than [android.text.style.BulletSpan]
@@ -66,11 +67,8 @@ class BulletPointSpan(
                             Direction.CW)
                 }
 
-                with(c) {
-                    save()
-                    translate(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f)
+                c.withTranslation(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f) {
                     drawPath(bulletPath, p)
-                    restore()
                 }
             } else {
                 c.drawCircle(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f,
