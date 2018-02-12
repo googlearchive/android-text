@@ -49,6 +49,10 @@ object Parser {
         val matcher = patternQuote.matcher(string)
         var lastStartIndex = 0
 
+        // A sequence is basically an iterator that ends when a null value is returned. Thanks
+        // to this we can avoid the use of "while" loops, which are usually more difficult to read
+        // and prone to errors. Here we are creating a sequence of pairs that include the startIndex
+        // and endIndex based on the last index that was used in the previous iteration.
         generateSequence { matcher.findBoundaries(lastStartIndex) }
             .forEach { (startIndex, endIndex) ->
                 // we found a quote
@@ -90,6 +94,7 @@ object Parser {
         val matcher = pattern.matcher(string)
         var lastStartIndex = 0
 
+        // Also using a sequence here. See the one in the `parse` function above for more info.
         generateSequence { matcher.findBoundaries(lastStartIndex) }
             .forEach { (startIndex, endIndex) ->
                 // we found a mark

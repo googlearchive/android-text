@@ -37,6 +37,9 @@ class BulletPointSpan(
     private val useColor: Boolean = color != Color.BLACK
 ) : LeadingMarginSpan {
 
+    // By default, lazy is thread safe. This is good if this property can be accessed from different
+    // threads, but impacts performance otherwise. As this property is initialized in a draw method,
+    // it's important to be as fast as possible.
     private val bulletPath: Path by lazy(LazyThreadSafetyMode.NONE) { Path() }
 
     override fun getLeadingMargin(first: Boolean) = (2 * BULLET_RADIUS + 2 * gapWidth).toInt()
@@ -46,24 +49,27 @@ class BulletPointSpan(
      * margins before the bullet.
      */
     override fun drawLeadingMargin(
-        c: Canvas, p: Paint, x: Int, dir: Int, top: Int, baseline: Int, bottom: Int,
+        canvas: Canvas, paint: Paint, x: Int, dir: Int, top: Int, baseline: Int, bottom: Int,
         text: CharSequence, start: Int, end: Int, first: Boolean, l: Layout
     ) {
         if ((text as Spanned).getSpanStart(this) == start) {
-            p.withCustomColor {
-                if (c.isHardwareAccelerated) {
+            paint.withCustomColor {
+                if (canvas.isHardwareAccelerated) {
                     // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
                     bulletPath.addCircle(0.0f, 0.0f, 1.2f * BULLET_RADIUS, Direction.CW)
 
-                    c.withTranslation(gapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f) {
-                        drawPath(bulletPath, p)
+                    canvas.withTranslation(
+                        gapWidth + x + dir * BULLET_RADIUS,
+                        (top + bottom) / 2.0f
+                    ) {
+                        drawPath(bulletPath, paint)
                     }
                 } else {
-                    c.drawCircle(
+                    canvas.drawCircle(
                         gapWidth + x + dir * BULLET_RADIUS,
                         (top + bottom) / 2.0f,
                         BULLET_RADIUS,
-                        p
+                        paint
                     )
                 }
             }
@@ -75,6 +81,9 @@ class BulletPointSpan(
         private const val BULLET_RADIUS = 15.0f
     }
 
+    // When a custom color is used for bullets, the default style and colors need to be saved to
+    // then be set again after the draw finishes. This extension hides the boilerplate and does all
+    // this process by itself.
     private inline fun Paint.withCustomColor(body: () -> Unit){
         val oldStyle = style
         val oldColor = if (useColor) color else 0
