@@ -34,18 +34,18 @@ import androidx.text.inSpans
  * Renders the text as simple markdown, using spans.
  */
 class MarkdownBuilder(
-        private @ColorInt val bulletPointColor: Int,
-        private @ColorInt val codeBackgroundColor: Int,
-        private val codeBlockTypeface: Typeface?,
-        private val parser: Parser
+    @ColorInt private val bulletPointColor: Int,
+    @ColorInt private val codeBackgroundColor: Int,
+    private val codeBlockTypeface: Typeface?,
+    private val parser: Parser
 ) {
 
     fun markdownToSpans(string: String): SpannedString {
         val markdown = parser.parse(string)
 
         return buildSpannedString {
-            for (i in 0 until markdown.elements.size) {
-                buildElement(markdown.elements[i], this)
+            for (element in markdown.elements) {
+                buildElement(element, this)
             }
         }
     }

@@ -16,12 +16,10 @@
 package com.android.example.text.styling
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
-import android.widget.TextView
 import com.android.example.text.styling.parser.Parser
 import com.android.example.text.styling.renderer.MarkdownBuilder
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * This sample demonstrates techniques for stying text; it is not intended to be a full markdown
@@ -38,13 +36,12 @@ class MainActivity : AppCompatActivity() {
         // Text enclosed in “`” will be transformed into inline code block
         // Lines starting with “+ ” or “* ” will be transformed into bullet points. Bullet
         // points can contain nested markdown elements, like code.
-        val bulletPointColor = ContextCompat.getColor(this, R.color.colorAccent)
-        val codeBackgroundColor = ContextCompat.getColor(this, R.color.code_background)
-        val codeBlockTypeface = ResourcesCompat.getFont(this, R.font.inconsolata)
+        val bulletPointColor = getColorCompat(R.color.colorAccent)
+        val codeBackgroundColor = getColorCompat(R.color.code_background)
+        val codeBlockTypeface = getFontCompat(R.font.inconsolata)
 
         MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface, Parser)
-                .markdownToSpans(getString(R.string.display_text))
-                .run { findViewById<TextView>(R.id.styled_text).text = this }
-
+            .markdownToSpans(getString(R.string.display_text))
+            .let { spannedText -> styledText.text = spannedText }
     }
 }
