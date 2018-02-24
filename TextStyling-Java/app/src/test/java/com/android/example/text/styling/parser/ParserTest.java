@@ -31,45 +31,47 @@ import java.util.List;
  */
 public class ParserTest {
 
+    private final String LS = System.getProperty("line.separator");
+
     @Test
     public void quoteBeginingOfText() {
-        String withQuote = "> This is a quote.\nThis is not";
+        String withQuote = "> This is a quote." + LS + "This is not";
 
         List<Element> elements = new Parser().parse(withQuote).getElements();
 
         assertEquals(elements.size(), 2);
         assertEquals(elements.get(0).getType(), QUOTE);
-        assertEquals(elements.get(0).getText(), "This is a quote.\n");
+        assertEquals(elements.get(0).getText(), "This is a quote." + LS);
         assertEquals(elements.get(1).getType(), TEXT);
         assertEquals(elements.get(1).getText(), "This is not");
     }
 
     @Test
     public void quoteEndOfText() {
-        String withQuote = "This is not a quote.\n> This is a quote";
+        String withQuote = "This is not a quote." + LS + "> This is a quote";
 
         List<Element> elements = new Parser().parse(withQuote).getElements();
 
         assertEquals(elements.size(), 2);
         assertEquals(elements.get(0).getType(), TEXT);
-        assertEquals(elements.get(0).getText(), "This is not a quote.\n");
+        assertEquals(elements.get(0).getText(), "This is not a quote." + LS);
         assertEquals(elements.get(1).getType(), QUOTE);
         assertEquals(elements.get(1).getText(), "This is a quote");
     }
 
     @Test
     public void simpleBulletPoints() {
-        String bulletPoints = "Bullet points:\n* One\n+ Two\n* Three";
+        String bulletPoints = "Bullet points:" + LS + "* One" + LS + "+ Two" + LS + "* Three";
 
         List<Element> elements = new Parser().parse(bulletPoints).getElements();
 
         assertEquals(elements.size(), 4);
         assertEquals(elements.get(0).getType(), TEXT);
-        assertEquals(elements.get(0).getText(), "Bullet points:\n");
+        assertEquals(elements.get(0).getText(), "Bullet points:" + LS);
         assertEquals(elements.get(1).getType(), BULLET_POINT);
-        assertEquals(elements.get(1).getText(), "One\n");
+        assertEquals(elements.get(1).getText(), "One" + LS);
         assertEquals(elements.get(2).getType(), BULLET_POINT);
-        assertEquals(elements.get(2).getText(), "Two\n");
+        assertEquals(elements.get(2).getText(), "Two" + LS);
         assertEquals(elements.get(3).getType(), BULLET_POINT);
         assertEquals(elements.get(3).getText(), "Three");
     }
@@ -110,20 +112,20 @@ public class ParserTest {
 
     @Test
     public void quoteBulletPointsCode() {
-        String text = "Complex:\n> Quote\nWith points:\n+ bullet `one`\n* bullet `two` is `long`";
+        String text = "Complex:" + LS + "> Quote" + LS + "With points:" + LS + "+ bullet `one`" + LS + "* bullet `two` is `long`";
 
         List<Element> elements = new Parser().parse(text).getElements();
 
         assertEquals(elements.size(), 5);
         assertEquals(elements.get(0).getType(), TEXT);
-        assertEquals(elements.get(0).getText(), "Complex:\n");
+        assertEquals(elements.get(0).getText(), "Complex:" + LS);
         assertEquals(elements.get(1).getType(), QUOTE);
-        assertEquals(elements.get(1).getText(), "Quote\n");
+        assertEquals(elements.get(1).getText(), "Quote" + LS);
         assertEquals(elements.get(2).getType(), TEXT);
-        assertEquals(elements.get(2).getText(), "With points:\n");
+        assertEquals(elements.get(2).getText(), "With points:" + LS);
         // first bullet point
         assertEquals(elements.get(3).getType(), BULLET_POINT);
-        assertEquals(elements.get(3).getText(), "bullet `one`\n");
+        assertEquals(elements.get(3).getText(), "bullet `one`" + LS);
         List<Element> subElements1 = elements.get(3).getElements();
         assertEquals(subElements1.size(), 3);
         assertEquals(subElements1.get(0).getType(), TEXT);
@@ -131,7 +133,7 @@ public class ParserTest {
         assertEquals(subElements1.get(1).getType(), CODE_BLOCK);
         assertEquals(subElements1.get(1).getText(), "one");
         assertEquals(subElements1.get(2).getType(), TEXT);
-        assertEquals(subElements1.get(2).getText(), "\n");
+        assertEquals(subElements1.get(2).getText(), "" + LS);
         // second bullet point
         assertEquals(elements.get(4).getType(), BULLET_POINT);
         assertEquals(elements.get(4).getText(), "bullet `two` is `long`");

@@ -23,40 +23,42 @@ import org.junit.Test
  */
 class ParserTest {
 
+    private val separator = System.getProperty("line.separator")
+    
     @Test fun quoteBeginningOfText() {
-        val withQuote = "> This is a quote.\nThis is not"
+        val withQuote = "> This is a quote.$separator"+"This is not"
 
         val elements = Parser.parse(withQuote).elements
 
         val expected = listOf(
-                Element(Element.Type.QUOTE, "This is a quote.\n"),
+                Element(Element.Type.QUOTE, "This is a quote.$separator"),
                 Element(Element.Type.TEXT, "This is not"))
         assertEquals(elements, expected)
     }
 
     @Test fun quoteEndOfText() {
-        val withQuote = "This is not a quote.\n> This is a quote"
+        val withQuote = "This is not a quote.$separator> This is a quote"
 
         val elements = Parser.parse(withQuote).elements
 
         val expected = listOf(
-                Element(Element.Type.TEXT, "This is not a quote.\n"),
+                Element(Element.Type.TEXT, "This is not a quote.$separator"),
                 Element(Element.Type.QUOTE, "This is a quote"))
         assertEquals(elements, expected)
     }
 
     @Test fun simpleBulletPoints() {
-        val bulletPoints = "Bullet points:\n* One\n+ Two\n* Three"
+        val bulletPoints = "Bullet points:$separator* One$separator+ Two$separator* Three"
 
         val elements = Parser.parse(bulletPoints).elements
 
         assertEquals(elements.size, 4)
         assertEquals(elements[0].type, Element.Type.TEXT)
-        assertEquals(elements[0].text, "Bullet points:\n")
+        assertEquals(elements[0].text, "Bullet points:$separator")
         assertEquals(elements[1].type, Element.Type.BULLET_POINT)
-        assertEquals(elements[1].text, "One\n")
+        assertEquals(elements[1].text, "One$separator")
         assertEquals(elements[2].type, Element.Type.BULLET_POINT)
-        assertEquals(elements[2].text, "Two\n")
+        assertEquals(elements[2].text, "Two$separator")
         assertEquals(elements[3].type, Element.Type.BULLET_POINT)
         assertEquals(elements[3].text, "Three")
     }
@@ -88,20 +90,20 @@ class ParserTest {
     }
 
     @Test fun quoteBulletPointsCode() {
-        val text = "Complex:\n> Quote\nWith points:\n+ bullet `one`\n* bullet `two` is `long`"
+        val text =  """Complex:$separator> Quote${separator}With points:$separator+ bullet `one`$separator* bullet `two` is `long`"""
 
         val elements = Parser.parse(text).elements
 
         assertEquals(elements.size, 5)
         assertEquals(elements[0].type, Element.Type.TEXT)
-        assertEquals(elements[0].text, "Complex:\n")
+        assertEquals(elements[0].text, "Complex:$separator")
         assertEquals(elements[1].type, Element.Type.QUOTE)
-        assertEquals(elements[1].text, "Quote\n")
+        assertEquals(elements[1].text, "Quote$separator")
         assertEquals(elements[2].type, Element.Type.TEXT)
-        assertEquals(elements[2].text, "With points:\n")
+        assertEquals(elements[2].text, "With points:$separator")
         // first bullet point
         assertEquals(elements[3].type, Element.Type.BULLET_POINT)
-        assertEquals(elements[3].text, "bullet `one`\n")
+        assertEquals(elements[3].text, "bullet `one`$separator")
         val subElements1 = elements[3].elements
         assertEquals(subElements1.size, 3)
         assertEquals(subElements1[0].type, Element.Type.TEXT)
@@ -109,7 +111,7 @@ class ParserTest {
         assertEquals(subElements1[1].type, Element.Type.CODE_BLOCK)
         assertEquals(subElements1[1].text, "one")
         assertEquals(subElements1[2].type, Element.Type.TEXT)
-        assertEquals(subElements1[2].text, "\n")
+        assertEquals(subElements1[2].text, "$separator")
         // second bullet point
         assertEquals(elements[4].type, Element.Type.BULLET_POINT)
         assertEquals(elements[4].text, "bullet `two` is `long`")

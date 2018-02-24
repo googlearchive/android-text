@@ -1,0 +1,35 @@
+language: android
+jdk:
+  - oraclejdk8
+sudo: required
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+android:
+  components:
+    # Uncomment the lines below if you want to
+    # use the latest revision of Android SDK Tools
+    - tools
+    - tools # TODO force travis to fetch latest tools
+    - platform-tools
+
+    # The BuildTools version used by your project
+    - build-tools-27.0.2
+
+    # The SDK version used to compile your project
+    - android-27
+  licenses:
+    - 'android-sdk-license-.+'
+before_install:
+  - yes | sdkmanager "platforms;android-27" # https://github.com/travis-ci/travis-ci/issues/8874
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache/
+script:
+    - (cd TextStyling-Java;   ./gradlew -Pci --console=plain :app:testDebug)
+    - (cd TextStyling-Kotlin; ./gradlew -Pci --console=plain :app:testDebug)

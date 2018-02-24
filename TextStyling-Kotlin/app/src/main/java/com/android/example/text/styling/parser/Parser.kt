@@ -84,8 +84,8 @@ object Parser {
         // we don't have an end of line, so the quote is the last element in the text
         // so we can consider that the end of the quote is the end of the text
             -1 -> string.length
-        // add the new line as part of the element
-            else -> endOfParagraph + 1
+        // add the line separator as part of the element
+            else -> endOfParagraph + LINE_SEPARATOR.length
         }
     }
 
@@ -129,14 +129,15 @@ object Parser {
                             // we don't have an end of code block so this is just text
                             markEnd = string.length
                             text = string.subSequence(startIndex, markEnd)
+                            parents.add(Element(Element.Type.TEXT, text, emptyList<Element>()))
                             lastStartIndex = markEnd
                         } else {
                             // we found the end of the code block
                             text = string.subSequence(endIndex, markEnd)
+                            parents.add(Element(Element.Type.CODE_BLOCK, text, emptyList<Element>()))
                             // adding 1 so we can ignore the ending "`" for the code block
                             lastStartIndex = markEnd + 1
                         }
-                        parents.add(Element(Element.Type.TEXT, text, emptyList<Element>()))
                     }
                 }
             }
