@@ -24,6 +24,12 @@ import org.junit.Test
 class ParserTest {
 
     private val separator = System.getProperty("line.separator")
+
+    // PROBE to verify that one test fails in the suite
+    @Test
+    fun test_fails() {
+        assertEquals(0, 2)
+    }
     
     @Test fun quoteBeginningOfText() {
         val withQuote = "> This is a quote.$separator"+"This is not"
