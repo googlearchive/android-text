@@ -33,4 +33,4 @@ cache:
     - $HOME/.android/build-cache/
 script:
     - cd TextStyling-Java;   ./gradlew -Pci --console=plain :app:testDebug
-    - cd TextStyling-Kotlin; ./gradlew -Pci --console=plain :app:testDebug
+    - cd ../TextStyling-Kotlin; ./gradlew -Pci --console=plain :app:testDebug
