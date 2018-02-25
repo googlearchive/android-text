@@ -34,43 +34,51 @@ before_script:
 - android-wait-for-emulator
 - adb shell input keyevent 82 &
 - adb wait-for-device get-serialno
-#- cd ${TRAVIS_BUILD_DIR}
-#- chmod +x gradlew
-- ./gradlew --version
-- ./gradlew clean
-
-  #./gradlew build assembleAndroidTest -PtestCoverageEnabled='true'
 
 script:
 - |
-
+  cd TextStyling-Java
+  ./gradlew --version
+  ./gradlew clean
   ./gradlew build assembleAndroidTest
   retval=$?
   if [ $retval -ne 0 ]; then
     echo "error on assembling, exit code: "$retval
     exit $retval
   fi
-# See http://stackoverflow.com/questions/21294945/error-unable-to-find-instrumentation-info-for-componentinfo
-# Instead of this (which doesn't give any output during tests execution):
-# - ./gradlew connectedCheck -PdisablePreDex --continue --stacktrace --debug
-# run:
-
-# ./gradlew :app:installDebug :app:installDebugAndroidTest -PtestCoverageEnabled='true'
 
 - |
-
   ./gradlew :app:installDebug :app:installDebugAndroidTest
   retval=$?
   if [ $retval -ne 0 ]; then
     echo "error on install, exit code: "$retval
     exit $retval
   fi
+  ./gradlew -Pci --console=plain :app:testDebug
+  ./gradlew connectedCheck
 
-script:
-    - cd TextStyling-Java;   ./gradlew -Pci --console=plain :app:testDebug
-    - ./gradlew build connectedCheck
-    - cd ../TextStyling-Kotlin; ./gradlew -Pci --console=plain :app:testDebug
-    - ./gradlew build connectedCheck
+- |
+  cd ../TextStyling-Kotlin
+  ./gradlew --version
+  ./gradlew clean
+  ./gradlew build assembleAndroidTest
+  retval=$?
+  if [ $retval -ne 0 ]; then
+    echo "error on assembling, exit code: "$retval
+    exit $retval
+  fi
+
+- |
+  ./gradlew :app:installDebug :app:installDebugAndroidTest
+  retval=$?
+  if [ $retval -ne 0 ]; then
+    echo "error on install, exit code: "$retval
+    exit $retval
+  fi
+  ./gradlew -Pci --console=plain :app:testDebug
+  ./gradlew connectedCheck
+
+
 after_failure:
   - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html ]; then lynx -dump /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html; fi
   - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Java/app/build/reports/androidTests/connected/index.html ];    then lynx -dump /home/travis/build/jimandreas/android-text/TextStyling-Java/app/build/reports/androidTests/connected/index.html; fi
