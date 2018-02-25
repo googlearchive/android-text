@@ -17,6 +17,7 @@ package com.android.example.text.styling.renderer
 
 import android.graphics.Typeface
 import android.support.test.InstrumentationRegistry
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.text.SpannedString
 import android.text.style.LeadingMarginSpan
@@ -35,8 +36,8 @@ class MarkdownBuilderTest {
 
     init {
         val context = InstrumentationRegistry.getTargetContext()
-        val bulletPointColor = context.getColor(R.color.colorAccent)
-        val codeBackgroundColor = context.getColor(R.color.code_background)
+        val bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent)
+        val codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background)
         val codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata)
         builder = MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
                 Parser)
