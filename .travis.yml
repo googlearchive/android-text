@@ -1,4 +1,4 @@
-language: android
+language: android  # cribbed from : https://github.com/hidroh/materialistic/blob/master/.travis.yml
 jdk:
   - oraclejdk8
 sudo: required
@@ -7,6 +7,7 @@ addons:
     packages:
       - oracle-java8-installer
       - lynx
+      - fonts-inconsolata
 android:
   components:
     # Uncomment the lines below if you want to
@@ -39,7 +40,6 @@ before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
-  # kick start travis
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache/
@@ -50,3 +50,5 @@ script:
     - ./gradlew build connectedCheck
 after_failure:
   - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html ]; then lynx -dump /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html; fi
+  - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Java/app/build/reports/androidTests/connected/index.html ];    then lynx -dump /home/travis/build/jimandreas/android-text/TextStyling-Java/app/build/reports/androidTests/connected/index.html; fi
+  - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/androidTests/connected/index.html ]; then lynx -dump  /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/androidTests/connected/index.html; fi
