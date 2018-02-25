@@ -6,6 +6,7 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
+      - lynx
 android:
   components:
     # Uncomment the lines below if you want to
@@ -34,3 +35,5 @@ cache:
 script:
     - cd TextStyling-Java;   ./gradlew -Pci --console=plain :app:testDebug
     - cd ../TextStyling-Kotlin; ./gradlew -Pci --console=plain :app:testDebug
+after_failure:
+  - if [ -f /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html ]; then lynx -dump /home/travis/build/jimandreas/android-text/TextStyling-Kotlin/app/build/reports/tests/testDebugUnitTest/index.html; fi
