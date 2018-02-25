@@ -21,12 +21,25 @@ android:
     - extra-android-m2repository
     - sys-img-armeabi-v7a-android-25
 
+  licenses:
+    - 'android-sdk-license-.+'
+
 env:
   matrix:
     - ANDROID_TARGET=android-4 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+
+before_install:
+  - yes | sdkmanager "platforms;android-27" # https://github.com/travis-ci/travis-ci/issues/8874
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache/
 
 before_script:
   # Create and start emulator
