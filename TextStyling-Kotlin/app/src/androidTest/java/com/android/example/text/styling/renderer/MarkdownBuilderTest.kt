@@ -38,7 +38,8 @@ class MarkdownBuilderTest {
         val context = InstrumentationRegistry.getTargetContext()
         val bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent)
         val codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background)
-        val codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata)
+//        val codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata)
+        val codeBlockTypeface = Typeface.DEFAULT
         builder = MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
                 Parser)
     }
