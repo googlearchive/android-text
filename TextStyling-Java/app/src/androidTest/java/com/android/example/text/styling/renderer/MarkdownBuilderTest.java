@@ -42,7 +42,8 @@ public class MarkdownBuilderTest {
         Context context = InstrumentationRegistry.getTargetContext();
         int bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent);
         int codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background);
-        Typeface codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata);
+//        Typeface codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata);
+        Typeface codeBlockTypeface = Typeface.DEFAULT;
         builder = new MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
                 new Parser());
     }
