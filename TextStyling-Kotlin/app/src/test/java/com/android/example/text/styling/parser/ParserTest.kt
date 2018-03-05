@@ -31,7 +31,7 @@ class ParserTest {
         val expected = listOf(
                 Element(Element.Type.QUOTE, "This is a quote.\n"),
                 Element(Element.Type.TEXT, "This is not"))
-        assertEquals(elements, expected)
+        assertEquals(expected, elements)
     }
 
     @Test fun quoteEndOfText() {
@@ -42,7 +42,7 @@ class ParserTest {
         val expected = listOf(
                 Element(Element.Type.TEXT, "This is not a quote.\n"),
                 Element(Element.Type.QUOTE, "This is a quote"))
-        assertEquals(elements, expected)
+        assertEquals(expected, elements)
     }
 
     @Test fun simpleBulletPoints() {
@@ -71,7 +71,7 @@ class ParserTest {
                 Element(Element.Type.CODE_BLOCK, "Text"),
                 Element(Element.Type.TEXT, " in "),
                 Element(Element.Type.CODE_BLOCK, "Kotlin"))
-        assertEquals(elements, expected)
+        assertEquals(expected, elements)
     }
 
     @Test fun codeWithExtraTick() {
@@ -84,7 +84,7 @@ class ParserTest {
                 Element(Element.Type.CODE_BLOCK, "Text"),
                 Element(Element.Type.TEXT, " in "),
                 Element(Element.Type.TEXT, "`Kotlin"))
-        assertEquals(elements, expected)
+        assertEquals(expected, elements)
     }
 
     @Test fun quoteBulletPointsCode() {

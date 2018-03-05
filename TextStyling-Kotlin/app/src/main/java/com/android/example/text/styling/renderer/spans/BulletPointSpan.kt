@@ -22,6 +22,7 @@ import android.graphics.Path
 import android.graphics.Path.Direction
 import android.support.annotation.ColorInt
 import android.support.annotation.Px
+import android.support.annotation.VisibleForTesting
 import android.text.Layout
 import android.text.Spanned
 import android.text.style.LeadingMarginSpan
@@ -32,9 +33,9 @@ import androidx.graphics.withTranslation
  * and with a left margin.
  */
 class BulletPointSpan(
-    @Px private val gapWidth: Int = DEFAULT_GAP_WIDTH,
-    @ColorInt private val color: Int = Color.BLACK,
-    private val useColor: Boolean = color != Color.BLACK
+        @Px private val gapWidth: Int = DEFAULT_GAP_WIDTH,
+        @ColorInt private val color: Int = Color.BLACK,
+        private val useColor: Boolean = color != Color.BLACK
 ) : LeadingMarginSpan {
 
     // By default, lazy is thread safe. This is good if this property can be accessed from different
@@ -42,51 +43,60 @@ class BulletPointSpan(
     // it's important to be as fast as possible.
     private val bulletPath: Path by lazy(LazyThreadSafetyMode.NONE) { Path() }
 
-    override fun getLeadingMargin(first: Boolean) = (2 * BULLET_RADIUS + 2 * gapWidth).toInt()
+    override fun getLeadingMargin(first: Boolean): Int {
+        return (2 * DEFAULT_BULLET_RADIUS + 2 * gapWidth).toInt()
+    }
 
     /**
      * Using a similar drawing mechanism with [android.text.style.BulletSpan] but adding
      * margins before the bullet.
      */
     override fun drawLeadingMargin(
-        canvas: Canvas, paint: Paint, x: Int, dir: Int, top: Int, baseline: Int, bottom: Int,
-        text: CharSequence, start: Int, end: Int, first: Boolean, l: Layout
+            canvas: Canvas, paint: Paint, currentMarginLocation: Int, paragraphDirection: Int,
+            lineTop: Int, lineBaseline: Int, lineBottom: Int, text: CharSequence, lineStart: Int,
+            lineEnd: Int, isFirstLine: Boolean, layout: Layout
     ) {
-        if ((text as Spanned).getSpanStart(this) == start) {
+        if ((text as Spanned).getSpanStart(this) == lineStart) {
             paint.withCustomColor {
                 if (canvas.isHardwareAccelerated) {
                     // Bullet is slightly better to avoid aliasing artifacts on mdpi devices.
-                    bulletPath.addCircle(0.0f, 0.0f, 1.2f * BULLET_RADIUS, Direction.CW)
+                    bulletPath.addCircle(0.0f, 0.0f, 1.2f * DEFAULT_BULLET_RADIUS, Direction.CW)
 
                     canvas.withTranslation(
-                        gapWidth + x + dir * BULLET_RADIUS,
-                        (top + bottom) / 2.0f
+                            getCircleXLocation(currentMarginLocation, paragraphDirection),
+                            getCircleYLocation(lineTop, lineBottom)
                     ) {
                         drawPath(bulletPath, paint)
                     }
                 } else {
                     canvas.drawCircle(
-                        gapWidth + x + dir * BULLET_RADIUS,
-                        (top + bottom) / 2.0f,
-                        BULLET_RADIUS,
-                        paint
+                            getCircleXLocation(currentMarginLocation, paragraphDirection),
+                            getCircleYLocation(lineTop, lineBottom),
+                            DEFAULT_BULLET_RADIUS,
+                            paint
                     )
                 }
             }
         }
     }
 
+    private fun getCircleYLocation(lineTop: Int, lineBottom: Int) =
+            (lineTop + lineBottom) / 2.0f
+
+    private fun getCircleXLocation(currentMarginLocation: Int, paragraphDirection: Int) =
+            gapWidth + currentMarginLocation + paragraphDirection * DEFAULT_BULLET_RADIUS
+
     companion object {
         private const val DEFAULT_GAP_WIDTH = 2
-        private const val BULLET_RADIUS = 15.0f
+        @VisibleForTesting
+        const val DEFAULT_BULLET_RADIUS = 15.0f
     }
 
     // When a custom color is used for bullets, the default style and colors need to be saved to
-    // then be set again after the draw finishes. This extension hides the boilerplate and does all
-    // this process by itself.
-    private inline fun Paint.withCustomColor(body: () -> Unit){
+    // then be set again after the draw finishes. This extension hides the boilerplate.
+    private inline fun Paint.withCustomColor(block: () -> Unit) {
         val oldStyle = style
-        val oldColor = if (useColor) color else 0
+        val oldColor = if (useColor) color else Color.TRANSPARENT
 
         if (useColor) {
             color = this@BulletPointSpan.color
@@ -94,7 +104,7 @@ class BulletPointSpan(
 
         style = Paint.Style.FILL
 
-        body()
+        block()
 
         if (useColor) {
             color = oldColor

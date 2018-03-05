@@ -46,9 +46,10 @@ dependencies {
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.mockito:mockito-all:$mockitoVersion"
-    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
 
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "com.google.dexmaker:dexmaker:$dexmakerVersion"
+    androidTestImplementation "com.google.dexmaker:dexmaker-mockito:$dexmakerMockitoVersion"
 }

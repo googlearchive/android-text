@@ -16,7 +16,6 @@
 package com.android.example.text.styling.parser
 
 import java.util.Collections.emptyList
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -49,24 +48,21 @@ object Parser {
         val matcher = patternQuote.matcher(string)
         var lastStartIndex = 0
 
-        // A sequence is basically an iterator that ends when a null value is returned. Thanks
-        // to this we can avoid the use of "while" loops, which are usually more difficult to read
-        // and prone to errors. Here we are creating a sequence of pairs that include the startIndex
-        // and endIndex based on the last index that was used in the previous iteration.
-        generateSequence { matcher.findBoundaries(lastStartIndex) }
-            .forEach { (startIndex, endIndex) ->
-                // we found a quote
-                if (lastStartIndex < startIndex) {
-                    // check what was before the quote
-                    val text = string.subSequence(lastStartIndex, startIndex)
-                    parents.addAll(findElements(text, pattern))
-                }
-                // a quote can only be a paragraph long, so look for end of line
-                val endOfQuote = getEndOfParagraph(string, endIndex)
-                lastStartIndex = endOfQuote
-                val quotedText = string.subSequence(endIndex, endOfQuote)
-                parents.add(Element(Element.Type.QUOTE, quotedText, emptyList<Element>()))
+        while (matcher.find(lastStartIndex)) {
+            val startIndex = matcher.start()
+            val endIndex = matcher.end()
+            // we found a quote
+            if (lastStartIndex < startIndex) {
+                // check what was before the quote
+                val text = string.subSequence(lastStartIndex, startIndex)
+                parents.addAll(findElements(text, pattern))
             }
+            // a quote can only be a paragraph long, so look for end of line
+            val endOfQuote = getEndOfParagraph(string, endIndex)
+            lastStartIndex = endOfQuote
+            val quotedText = string.subSequence(endIndex, endOfQuote)
+            parents.add(Element(Element.Type.QUOTE, quotedText, emptyList<Element>()))
+        }
 
         // check if there are any other element after the quote
         if (lastStartIndex < string.length) {
@@ -78,15 +74,16 @@ object Parser {
     }
 
     private fun getEndOfParagraph(string: CharSequence, endIndex: Int): Int {
-        val endOfParagraph = string.indexOf(LINE_SEPARATOR, endIndex)
-
-        return when (endOfParagraph) {
-        // we don't have an end of line, so the quote is the last element in the text
-        // so we can consider that the end of the quote is the end of the text
-            -1 -> string.length
-        // add the new line as part of the element
-            else -> endOfParagraph + 1
+        var endOfParagraph = string.indexOf(LINE_SEPARATOR, endIndex)
+        if (endOfParagraph == -1) {
+            // we don't have an end of line, so the quote is the last element in the text
+            // so we can consider that the end of the quote is the end of the text
+            endOfParagraph = string.length
+        } else {
+            // add the new line as part of the element
+            endOfParagraph++
         }
+        return endOfParagraph
     }
 
     private fun findElements(string: CharSequence, pattern: Pattern): List<Element> {
@@ -94,52 +91,50 @@ object Parser {
         val matcher = pattern.matcher(string)
         var lastStartIndex = 0
 
-        // Also using a sequence here. See the one in the `parse` function above for more info.
-        generateSequence { matcher.findBoundaries(lastStartIndex) }
-            .forEach { (startIndex, endIndex) ->
-                // we found a mark
-                val mark = string.subSequence(startIndex, endIndex)
-                if (lastStartIndex < startIndex) {
-                    // check what was before the mark
-                    parents.addAll(
-                        findElements(
-                            string.subSequence(lastStartIndex, startIndex),
-                            pattern
-                        )
-                    )
+        while (matcher.find(lastStartIndex)) {
+            val startIndex = matcher.start()
+            val endIndex = matcher.end()
+            // we found a mark
+            val mark = string.subSequence(startIndex, endIndex)
+            if (lastStartIndex < startIndex) {
+                // check what was before the mark
+                parents.addAll(findElements(string.subSequence(lastStartIndex, startIndex),
+                        pattern))
+            }
+            val text: CharSequence
+            // check what kind of mark this was
+            when (mark) {
+                BULLET_PLUS, BULLET_STAR -> {
+                    // every bullet point is max until a new line or end of text
+                    var endOfBulletPoint = getEndOfParagraph(string, endIndex)
+                    text = string.subSequence(endIndex, endOfBulletPoint)
+                    lastStartIndex = endOfBulletPoint
+                    // also see what else we have in the text
+                    val subMarks = findElements(text, pattern)
+                    val bulletPoint = Element(Element.Type.BULLET_POINT, text, subMarks)
+                    parents.add(bulletPoint)
                 }
-                val text: CharSequence
-                // check what kind of mark this was
-                when (mark) {
-                    BULLET_PLUS, BULLET_STAR -> {
-                        // every bullet point is max until a new line or end of text
-                        val endOfBulletPoint = getEndOfParagraph(string, endIndex)
-                        text = string.subSequence(endIndex, endOfBulletPoint)
-                        lastStartIndex = endOfBulletPoint
-                        // also see what else we have in the text
-                        val subMarks = findElements(text, pattern)
-                        val bulletPoint = Element(Element.Type.BULLET_POINT, text, subMarks)
-                        parents.add(bulletPoint)
-                    }
-                    CODE_BLOCK -> {
-                        // a code block is set between two "`" so look for the other one
-                        // if another "`" is not found, then this is not a code block
-                        var markEnd = string.indexOf(CODE_BLOCK, endIndex)
-                        if (markEnd == -1) {
-                            // we don't have an end of code block so this is just text
-                            markEnd = string.length
-                            text = string.subSequence(startIndex, markEnd)
-                            lastStartIndex = markEnd
-                        } else {
-                            // we found the end of the code block
-                            text = string.subSequence(endIndex, markEnd)
-                            // adding 1 so we can ignore the ending "`" for the code block
-                            lastStartIndex = markEnd + 1
-                        }
-                        parents.add(Element(Element.Type.TEXT, text, emptyList<Element>()))
+                CODE_BLOCK -> {
+                    // a code block is set between two "`" so look for the other one
+                    // if another "`" is not found, then this is not a code block
+                    var markEnd = string.indexOf(CODE_BLOCK, endIndex)
+                    if (markEnd == -1) {
+                        // we don't have an end of code block so this is just text
+                        markEnd = string.length
+                        text = string.substring(startIndex, markEnd)
+                        parents.add(Element(Element.Type.TEXT, text, emptyList()))
+                        lastStartIndex = markEnd
+                    } else {
+                        // we found the end of the code block
+                        text = string.substring(endIndex, markEnd)
+                        parents.add(Element(Element.Type.CODE_BLOCK, text,
+                                kotlin.collections.emptyList()))
+                        // adding 1 so we can ignore the ending "`" for the code block
+                        lastStartIndex = markEnd + 1
                     }
                 }
             }
+        }
 
         // check if there's any more text left
         if (lastStartIndex < string.length) {
@@ -161,6 +156,3 @@ object Parser {
 
     private val LINE_SEPARATOR = System.getProperty("line.separator")
 }
-
-private fun Matcher.findBoundaries(start: Int): Pair<Int, Int>? =
-    if (find(start)) start() to end() else null

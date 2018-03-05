@@ -17,9 +17,9 @@ package com.android.example.text.styling
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import com.android.example.text.styling.parser.Parser
 import com.android.example.text.styling.renderer.MarkdownBuilder
-import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * This sample demonstrates techniques for stying text; it is not intended to be a full markdown
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         val codeBlockTypeface = getFontCompat(R.font.inconsolata)
 
         MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface, Parser)
-            .markdownToSpans(getString(R.string.display_text))
-            .let { spannedText -> styledText.text = spannedText }
+                .markdownToSpans(getString(R.string.display_text))
+                .run { findViewById<TextView>(R.id.styledText).text = this }
     }
 }
