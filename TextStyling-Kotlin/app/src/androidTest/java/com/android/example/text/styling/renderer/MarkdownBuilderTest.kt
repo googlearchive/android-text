@@ -22,6 +22,7 @@ import android.text.style.LeadingMarginSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import com.android.example.text.styling.R
+import com.android.example.text.styling.getColorCompat
 import com.android.example.text.styling.parser.Parser
 import com.android.example.text.styling.renderer.spans.BulletPointSpan
 import com.android.example.text.styling.renderer.spans.CodeBlockSpan
@@ -34,8 +35,8 @@ import org.junit.Test
 class MarkdownBuilderTest {
 
     private val context = InstrumentationRegistry.getTargetContext()
-    val bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent)
-    val codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background)
+    val bulletPointColor = context.getColorCompat(R.color.colorAccent)
+    val codeBackgroundColor = context.getColorCompat(R.color.code_background)
     val codeBlockTypeface = Typeface.DEFAULT
     private val builder = MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
             Parser)
