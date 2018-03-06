@@ -16,11 +16,10 @@
 package com.android.example.text.styling
 
 import android.content.Context
-import android.graphics.Typeface
 import android.support.annotation.ColorRes
 import android.support.annotation.FontRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 
-fun Context.getColorCompat(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
-fun Context.getFontCompat(@FontRes fontRes: Int): Typeface? = ResourcesCompat.getFont(this, fontRes)
+fun Context.getColorCompat(@ColorRes colorRes: Int) = ContextCompat.getColor(this, colorRes)
+fun Context.getFontCompat(@FontRes fontRes: Int) = ResourcesCompat.getFont(this, fontRes)

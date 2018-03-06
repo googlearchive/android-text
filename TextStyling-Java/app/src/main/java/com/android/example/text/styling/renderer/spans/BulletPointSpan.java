@@ -16,11 +16,11 @@
 package com.android.example.text.styling.renderer.spans;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Px;
+import android.support.annotation.VisibleForTesting;
 import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.BulletSpan;
@@ -31,17 +31,16 @@ import android.text.style.LeadingMarginSpan;
  */
 public class BulletPointSpan implements LeadingMarginSpan {
 
-    private static final float BULLET_RADIUS = 15.0f;
+    @VisibleForTesting
+    static final float BULLET_RADIUS = 15.0f;
 
     private final @Px int gapWidth;
-    private final boolean useColor;
     private final @ColorInt int color;
 
     private static Path bulletPath;
 
     public BulletPointSpan(@Px int gapWidth, @ColorInt int color) {
         this.gapWidth = gapWidth;
-        useColor = true;
         this.color = color;
     }
 
@@ -51,42 +50,36 @@ public class BulletPointSpan implements LeadingMarginSpan {
     }
 
     @Override
-    public void drawLeadingMargin(Canvas c, Paint p, int x, int dir,
+    public void drawLeadingMargin(Canvas canvas, Paint paint, int x, int dir,
             int top, int baseline, int bottom,
             CharSequence text, int start, int end,
             boolean first, Layout l) {
         if (((Spanned) text).getSpanStart(this) == start) {
-            Paint.Style style = p.getStyle();
-            int oldcolor = 0;
+            Paint.Style style = paint.getStyle();
+            int oldcolor = paint.getColor();
+            paint.setColor(color);
 
-            if (useColor) {
-                oldcolor = p.getColor();
-                p.setColor(color);
-            }
-
-            p.setStyle(Paint.Style.FILL);
+            paint.setStyle(Paint.Style.FILL);
 
             final float y = (top + bottom) / 2f;
 
-            if (c.isHardwareAccelerated()) {
+            if (canvas.isHardwareAccelerated()) {
                 if (bulletPath == null) {
                     bulletPath = new Path();
                     bulletPath.addCircle(0.0f, 0.0f, BULLET_RADIUS, Path.Direction.CW);
                 }
 
-                c.save();
-                c.translate(gapWidth + x + dir * BULLET_RADIUS, y);
-                c.drawPath(bulletPath, p);
-                c.restore();
+                canvas.save();
+                canvas.translate(gapWidth + x + dir * BULLET_RADIUS, y);
+                canvas.drawPath(bulletPath, paint);
+                canvas.restore();
             } else {
-                c.drawCircle(gapWidth + x + dir * BULLET_RADIUS, y, BULLET_RADIUS, p);
+                canvas.drawCircle(gapWidth + x + dir * BULLET_RADIUS, y, BULLET_RADIUS, paint);
             }
 
-            if (useColor) {
-                p.setColor(oldcolor);
-            }
-
-            p.setStyle(style);
+            // restore
+            paint.setColor(oldcolor);
+            paint.setStyle(style);
         }
     }
 }

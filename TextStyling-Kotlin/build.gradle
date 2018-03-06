@@ -58,5 +58,7 @@ ext {
     runnerVersion = '1.0.1'
     rulesVersion = '1.0.1'
     espressoVersion = '3.0.1'
-    androidktx = "0.1"
+    androidktx = "0.2"
+    dexmakerVersion = '1.2'
+    dexmakerMockitoVersion = '1.2'
 }
