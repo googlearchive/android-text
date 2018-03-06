@@ -18,8 +18,6 @@ package com.android.example.text.styling.renderer
 import android.graphics.Typeface
 import android.support.test.InstrumentationRegistry
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.text.SpannedString
 import android.text.style.LeadingMarginSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
@@ -30,19 +28,18 @@ import com.android.example.text.styling.renderer.spans.CodeBlockSpan
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Tests for [MarkdownBuilder] class
+ */
 class MarkdownBuilderTest {
 
-    private val builder: MarkdownBuilder
-
-    init {
-        val context = InstrumentationRegistry.getTargetContext()
-        val bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent)
-        val codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background)
-//        val codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata)
-        val codeBlockTypeface = Typeface.DEFAULT
-        builder = MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
-                Parser)
-    }
+    private val context = InstrumentationRegistry.getTargetContext()
+    val bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent)
+    val codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background)
+    //        val codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata)
+    val codeBlockTypeface = Typeface.DEFAULT
+    private val builder = MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
+            Parser)
 
     @Test fun builder() {
         val result = builder.markdownToSpans("Hello, world!")
@@ -50,14 +47,14 @@ class MarkdownBuilderTest {
     }
 
     @Test fun text() {
-        val result = builder.markdownToSpans("Text") as SpannedString
+        val result = builder.markdownToSpans("Text")
 
         val spans = result.getSpans<Any>(0, result.length, Any::class.java)
         assertEquals(0, spans.size.toLong())
     }
 
     @Test fun textWithQuote() {
-        val result = builder.markdownToSpans("Text\n> Quote") as SpannedString
+        val result = builder.markdownToSpans("Text\n> Quote")
 
         assertEquals("Text\nQuote", result.toString())
         val spans = result.getSpans<Any>(0, result.length, Any::class.java)
@@ -76,7 +73,7 @@ class MarkdownBuilderTest {
     }
 
     @Test fun textWithBulletPoints() {
-        val result = builder.markdownToSpans("Points\n* one\n+ two") as SpannedString
+        val result = builder.markdownToSpans("Points\n* one\n+ two")
 
         assertEquals("Points\none\ntwo", result.toString())
         val spans = result.getSpans<Any>(0, result.length, Any::class.java)
@@ -91,7 +88,7 @@ class MarkdownBuilderTest {
     }
 
     @Test fun textWithCode() {
-        val result = builder.markdownToSpans("Text `code`") as SpannedString
+        val result = builder.markdownToSpans("Text `code`")
 
         assertEquals("Text code", result.toString())
         val spans = result.getSpans<Any>(0, result.length, Any::class.java)
