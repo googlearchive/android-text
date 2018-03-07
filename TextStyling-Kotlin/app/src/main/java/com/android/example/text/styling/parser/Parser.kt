@@ -80,8 +80,8 @@ object Parser {
             // so we can consider that the end of the quote is the end of the text
             endOfParagraph = string.length
         } else {
-            // add the new line as part of the element
-            endOfParagraph++
+            // add the line separator as part of the element
+            endOfParagraph += LINE_SEPARATOR.length
         }
         return endOfParagraph
     }

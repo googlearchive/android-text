@@ -100,7 +100,7 @@ public class Parser {
             endOfParagraph = string.length();
         } else {
             // add the new line as part of the element
-            endOfParagraph++;
+            endOfParagraph += LINE_SEPARATOR.length();
         }
         return endOfParagraph;
     }

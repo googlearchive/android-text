@@ -18,6 +18,7 @@ package com.android.example.text.styling.renderer;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.test.InstrumentationRegistry;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.SpannedString;
 import android.text.style.LeadingMarginSpan;
@@ -39,9 +40,9 @@ public class MarkdownBuilderTest {
 
     public MarkdownBuilderTest() {
         Context context = InstrumentationRegistry.getTargetContext();
-        int bulletPointColor = context.getColor(R.color.colorAccent);
-        int codeBackgroundColor = context.getColor(R.color.code_background);
-        Typeface codeBlockTypeface = ResourcesCompat.getFont(context, R.font.inconsolata);
+        int bulletPointColor = ContextCompat.getColor(context, R.color.colorAccent);
+        int codeBackgroundColor = ContextCompat.getColor(context, R.color.code_background);
+        Typeface codeBlockTypeface = Typeface.DEFAULT;
         builder = new MarkdownBuilder(bulletPointColor, codeBackgroundColor, codeBlockTypeface,
                 new Parser());
     }
