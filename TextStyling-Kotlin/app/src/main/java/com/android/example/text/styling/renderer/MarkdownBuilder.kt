@@ -16,7 +16,7 @@
 package com.android.example.text.styling.renderer
 
 import android.graphics.Typeface
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import android.text.SpannableStringBuilder
 import android.text.SpannedString
 import android.text.style.LeadingMarginSpan
