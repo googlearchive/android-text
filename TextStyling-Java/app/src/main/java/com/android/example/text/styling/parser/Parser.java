@@ -15,7 +15,7 @@
  */
 package com.android.example.text.styling.parser;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.android.example.text.styling.parser.Element.Type;
 

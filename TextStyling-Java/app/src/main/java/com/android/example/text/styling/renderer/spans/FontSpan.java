@@ -17,7 +17,7 @@ package com.android.example.text.styling.renderer.spans;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 

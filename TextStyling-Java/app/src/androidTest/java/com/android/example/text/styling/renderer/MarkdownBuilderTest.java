@@ -17,9 +17,9 @@ package com.android.example.text.styling.renderer;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.test.InstrumentationRegistry;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.test.InstrumentationRegistry;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.SpannedString;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.RelativeSizeSpan;
