@@ -20,9 +20,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Path.Direction
-import android.support.annotation.ColorInt
-import android.support.annotation.Px
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.ColorInt
+import androidx.annotation.Px
+import androidx.annotation.VisibleForTesting
 import android.text.Layout
 import android.text.Spanned
 import android.text.style.LeadingMarginSpan
