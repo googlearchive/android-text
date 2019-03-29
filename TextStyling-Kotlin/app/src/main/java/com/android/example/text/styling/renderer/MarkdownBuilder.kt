@@ -22,8 +22,8 @@ import android.text.SpannedString
 import android.text.style.LeadingMarginSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
-import androidx.text.buildSpannedString
-import androidx.text.inSpans
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import com.android.example.text.styling.parser.Element
 import com.android.example.text.styling.parser.Parser
 import com.android.example.text.styling.renderer.spans.BulletPointSpan
@@ -43,7 +43,7 @@ class MarkdownBuilder(
         val markdown = parser.parse(string)
 
         return buildSpannedString {
-            markdown.elements.forEach { it -> buildElement(it, this) }
+            markdown.elements.forEach { buildElement(it, this) }
         }
     }
 
